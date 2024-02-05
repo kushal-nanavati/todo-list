@@ -1,0 +1,83 @@
+<div class="w-full border my-3">
+    <div class="flex items-center px-3 gap-[2%]">
+        <div class="flex-initial">
+            <h2 class="text-2xl font-bold">ToDo List</h2>
+        </div>        
+        <form [formGroup]="searchForm" class="flex items-center flex-auto">
+            <input type="text" formControlName="searchTerm"
+                class="w-full border border-solid rounded-l border-neutral-600 bg-transparent px-3 py-[0.25rem] font-normal text-white-500 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-white-500 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-white-500 dark:placeholder:text-white-400 dark:focus:border-primary"
+                placeholder="Search">
+            <button class="bg-blue-500 border border-white-500 px-4 py-1 rounded hover:bg-blue-800"><i
+                    class="fa fa-search"></i></button>
+        </form>
+        <button class="flex-initial bg-blue-500 text-white-500 py-2 px-2 my-1 flex rounded" (click)="open = true">
+            <svg class="h-6 w-8 text-white-500" stroke-width="3" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" />
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add task
+        </button>
+    </div>
+    <div *ngIf="!tasksList" class="text-gray-500 text-bold flex justify-center mb-2">
+        No tasks to display.
+    </div>
+    <ng-container *ngFor="let task of tasksList">
+        <div class="max-w-sm rounded overflow-hidden shadow-lg border border-gray-600 mx-2 my-2 hover:cursor-pointer">
+            <div class="px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="font-bold text-xl mb-2">{{ task.taskName }}</div>
+                    <div class="relative text-gray-500 text-sm before:content-[''] before:absolute before:w-[10px] before:h-[10px] before:top-[6px] before:rounded-md"
+                        [ngClass]="{ 'before:bg-red-500 before:right-[33px]' : task.priority === 'HIGH', 'before:bg-orange-500 before:right-[54px]' : task.priority === 'MEDIUM', 'before:bg-green-500 before:right-[30px]' : task.priority === 'LOW'  }">
+                        {{ task.priority }}</div>
+                </div>
+                <p class="text-gray-500 text-base">{{ task.taskDescription }}</p>
+            </div>
+        </div>
+    </ng-container>
+</div>
+<app-modal-popup [open]="open" [title]="title" (closeModal)="open = false">
+    <form [formGroup]="modalForm" class="p-4 md:p-5" (ngSubmit)="onSubmitTaskForm()">
+        <div class="grid gap-4 mb-4 grid-cols-2">
+            <div class="col-span-2">
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                <input type="text" formControlName="taskName"
+                    class="text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    [ngClass]="{'border-rose-500': modalForm.get('username')?.touched && !modalForm.get('username')?.dirty }"
+                    placeholder="Type task name">
+                <span *ngIf="modalForm.get('taskName')?.touched && !modalForm.get('taskName')?.dirty"
+                    class="text-red-500 text-sm mt-1">*Task name is required</span>
+            </div>
+            <div class="col-span-1">
+                <label for="priority"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Priority</label>
+                <select formControlName="priority" (change)="onPriorityChange($event)"
+                    class="overflow-hidden rounded-lg border border-gray-500 block w-full p-2 5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 cursor-pointer"
+                    placeholder="Choose priority level">
+                    <option *ngFor="let priority of priorityLevels" [selected]="priority" [value]="priority">{{ priority
+                        }}</option>
+                </select>
+            </div>
+            <div class="col-span-2">
+                <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task
+                    Description</label>
+                <textarea rows="4" formControlName="taskDescription"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    [ngClass]="{'border-rose-500': modalForm.get('password')?.touched && !modalForm.get('password')?.dirty }"
+                    placeholder="Write product description here"></textarea>
+                <span *ngIf="modalForm.get('taskDescription')?.touched && !modalForm.get('taskDescription')?.dirty"
+                    class="text-red-500 text-sm mt-1">*Task description is required</span>
+            </div>
+        </div>
+        <button type="submit" [disabled]="!modalForm.valid"
+            class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            Add new task
+        </button>
+    </form>
+</app-modal-popup>

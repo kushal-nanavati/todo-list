@@ -1,0 +1,29 @@
+<div class="flex flex-col justify-center items-center h-screen">
+    <h2 class="text-white text-4xl py-10">Login form</h2>
+    <form [formGroup]="loginForm" class="bg-black rounded w-[50%] h-screen border py-8 px-8 mb-5 sm:w-full lg:w-2/3" (ngSubmit)="onSubmit()">
+        <h2 class="text-white text-2xl text-bold pb-4">Sign in to your account</h2>
+        <div class="mb-4">
+            <label for="username" class="block text-gray-600 font-bold mb-2">Username</label>
+            <input type="text" class="border w-full shadow rounded text-gray-700 bg-gray-300 py-2 px-3 focus:outline-none" formControlName="username" [ngClass]="{'border-rose-500': loginForm.get('username')?.touched && !loginForm.get('username')?.dirty }">
+            <span *ngIf="loginForm.get('username')?.touched && !loginForm.get('username')?.dirty" class="text-red-500 text-sm mt-1">*Username is required</span>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="block text-gray-600 font-bold mb-2">Password</label>
+            <input type="password"
+                class="border w-full shadow rounded text-gray-500 bg-gray-300 py-2 px-3 focus:outline-none" formControlName="password" [ngClass]="{'border-rose-500': loginForm.get('password')?.touched && !loginForm.get('password')?.dirty }">
+                <span *ngIf="loginForm.get('password')?.touched && !loginForm.get('password')?.dirty" class="text-red-500 text-sm mt-1">*Password is required</span>
+        </div>
+        <div class="flex justify-between mb-4">
+            <div class="flex items-center mb-4">
+                <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded mr-2">
+                <label class="text-sm font-medium text-gray-300">Remember me</label>
+            </div>
+            <div><a href="" class="text-blue-600 font-bold focus:text-underline">Forgot password?</a></div>
+        </div>
+        <button class="bg-blue-600 text-white w-full font-bold rounded py-2 px-3" [disabled]="!loginForm.valid">Sign in</button>
+        <div class="my-4">
+            <span>Don't have an account yet?</span>
+            <a href="" class="text-blue-500 font-bold ml-1">Sign up</a>
+        </div>
+    </form>
+</div>
