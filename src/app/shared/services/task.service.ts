@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToDoTask } from '../models/task.model';
-import { BehaviorSubject, Observable, filter, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, map, of, tap } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiConstants } from '../constants/api.constants';
 
@@ -21,8 +21,10 @@ export class TaskService {
   getAllTasks(searchValue?: string): Observable<ToDoTask[]> {
     if (searchValue && searchValue.trim()) {            
       return this.http.get<ToDoTask[]>(ApiConstants.getAllTasks()+`?searchTerm=${searchValue}`)
-      .pipe(tap((tasks: ToDoTask[]) => tasks.filter((task: ToDoTask) =>     
-      task.taskName.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())     
+      .pipe(map((tasks: ToDoTask[]) => tasks.filter((task: ToDoTask) =>     
+      task.taskName.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) ||
+      task.priority.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) ||
+      task.taskDescription.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())          
     )));      
     }
     return this.http.get<ToDoTask[]>(ApiConstants.getAllTasks());
