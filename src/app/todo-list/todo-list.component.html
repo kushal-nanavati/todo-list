@@ -10,7 +10,7 @@
             <button class="bg-blue-500 border border-white-500 px-4 py-1 rounded hover:bg-blue-800"><i
                     class="fa fa-search"></i></button>
         </form>
-        <button class="flex-initial bg-blue-500 text-white-500 py-2 px-2 my-1 flex rounded" (click)="open = true">
+        <button class="flex-initial bg-blue-500 text-white-500 py-2 px-2 my-1 flex rounded" (click)="open = true" data-te-target="#createModal" data-te-toggle="modal">
             <svg class="h-6 w-8 text-white-500" stroke-width="3" stroke="currentColor" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" />
@@ -20,7 +20,7 @@
             Add task
         </button>
     </div>
-    <div *ngIf="!tasksList" class="text-gray-500 text-bold flex justify-center mb-2">
+    <div *ngIf="!tasksList.length" class="text-gray-500 text-bold flex justify-center mb-2">
         No tasks to display.
     </div>
     <ng-container *ngFor="let task of tasksList">
@@ -32,12 +32,23 @@
                         [ngClass]="{ 'before:bg-red-500 before:right-[33px]' : task.priority === 'HIGH', 'before:bg-orange-500 before:right-[54px]' : task.priority === 'MEDIUM', 'before:bg-green-500 before:right-[30px]' : task.priority === 'LOW'  }">
                         {{ task.priority }}</div>
                 </div>
-                <p class="text-gray-500 text-base">{{ task.taskDescription }}</p>
+                <div class="flex justify-between items-center my-2">
+                    <p class="text-gray-500 text-base">{{ task.taskDescription }}</p>
+                    <i class="fa fa-trash" (click)="deleteModalPopup(task.id)" data-toggle="modal" data-target="deleteModal"></i>
+                </div>                
             </div>
         </div>
     </ng-container>
 </div>
-<app-modal-popup [open]="open" [title]="title" (closeModal)="open = false">
+<app-modal-popup data-te-modal-init [open]="openPopup" [title]="deleteTitle" (closeModal)="openPopup = false" #deleteModal>
+    <div class="text-white-400 px-6 py-3">Are you sure want to delete this task?</div>
+    <div class="flex justify-around items-center w-[60%] px-6 py-3 gap-2">
+        <button class="text-white bg-blue-500 rounded px-6 py-3" (click)="openPopup = false">Cancel</button>
+        <button class="text-white bg-blue-500 rounded px-6 py-3" (click)="deleteTask(selectedTaskId)">Confirm</button>
+    </div>    
+</app-modal-popup>
+
+<app-modal-popup data-te-modal-init [open]="open" [title]="createTitle" (closeModal)="open = false" #createModal>
     <form [formGroup]="modalForm" class="p-4 md:p-5" (ngSubmit)="onSubmitTaskForm()">
         <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">

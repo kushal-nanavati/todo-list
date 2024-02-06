@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToDoTask } from '../models/task.model';
-import { BehaviorSubject, Observable, filter, map, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiConstants } from '../constants/api.constants';
 
@@ -8,7 +8,6 @@ import { ApiConstants } from '../constants/api.constants';
   providedIn: 'root'
 })
 export class TaskService {
-  public taskSubject: BehaviorSubject<ToDoTask[]> = new BehaviorSubject<ToDoTask[]>([]);
   public taskList: ToDoTask[] = [];
   constructor(private http: HttpClient) { }
 
@@ -20,7 +19,7 @@ export class TaskService {
 
   getAllTasks(searchValue?: string): Observable<ToDoTask[]> {
     if (searchValue && searchValue.trim()) {            
-      return this.http.get<ToDoTask[]>(ApiConstants.getAllTasks()+`?searchTerm=${searchValue}`)
+      return this.http.get<ToDoTask[]>(ApiConstants.getAllTasks())
       .pipe(map((tasks: ToDoTask[]) => tasks.filter((task: ToDoTask) =>     
       task.taskName.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) ||
       task.priority.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) ||
@@ -28,5 +27,9 @@ export class TaskService {
     )));      
     }
     return this.http.get<ToDoTask[]>(ApiConstants.getAllTasks());
+  }
+
+  deleteTask(id: number): Observable<number[]> {      
+    return this.http.delete<number[]>(`${ApiConstants.deleteTask()}/${id}`);
   }
 }
