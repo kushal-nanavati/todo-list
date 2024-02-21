@@ -1,0 +1,6 @@
+<form [formGroup]="form" class="bg-black rounded lg:h-auto border py-8 px-8 mb-5"
+    (ngSubmit)="formSubmit(form.value)">
+    <app-header [title]="title"></app-header>
+    <ng-content [select]="formFields"></ng-content>
+    <app-button [buttonText]="buttonText" [isDisabled]="isDisabled"></app-button>
+</form>

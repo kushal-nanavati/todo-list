@@ -1,0 +1,8 @@
+<div class="mb-4" formFields [formGroup]="form">
+    <label class="block text-gray-600 font-bold mb-2">{{ label }}</label>
+    <input [type]="type" class="border w-full shadow rounded text-gray-700 bg-gray-300 py-2 px-3 focus:outline-none"
+        [formControlName]="name" [placeholder]="placeholder"
+        [ngClass]="{'border-rose-500': form.controls[name]?.touched && !form.controls[name]?.dirty }">
+    <span *ngIf="form.controls[name]?.touched && !form.controls[name]?.dirty"
+        class="text-red-500 text-sm mt-1">*{{ label }} is required</span>
+</div>

@@ -1,26 +1,35 @@
-<div class="w-full border my-3">
-    <div class="flex items-center px-3 gap-[2%]">
-        <div class="flex-initial">
-            <h2 class="text-2xl font-bold">ToDo List</h2>
-        </div>        
-        <form [formGroup]="searchForm" class="flex items-center flex-auto">
-            <input type="text" formControlName="searchTerm"
-                class="w-full border border-solid rounded-l border-neutral-600 bg-transparent px-3 py-[0.25rem] font-normal text-white-500 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-white-500 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-white-500 dark:placeholder:text-white-400 dark:focus:border-primary"
-                placeholder="Search">
-            <button class="bg-blue-500 border border-white-500 px-4 py-1 rounded hover:bg-blue-800"><i
-                    class="fa fa-search"></i></button>
-        </form>
-        <button class="flex-initial bg-blue-500 text-white-500 py-2 px-2 my-1 flex rounded" (click)="open = true" data-te-target="#createModal" data-te-toggle="modal">
-            <svg class="h-6 w-8 text-white-500" stroke-width="3" stroke="currentColor" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
+<app-header [title]="'ToDo List'">    
+    <form [formGroup]="searchForm" class="flex items-center flex-auto">
+        <input type="text" formControlName="searchTerm"
+            class="w-full border border-solid rounded-l border-neutral-600 bg-transparent px-3 py-[0.25rem] font-normal text-white-500 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-white-500 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-white-500 dark:placeholder:text-white-400 dark:focus:border-primary"
+            placeholder="Search">        
+        <button class="bg-blue-500 border border-white-500 px-4 py-1 rounded hover:bg-blue-800"><i
+                class="fa fa-search"></i></button>
+    </form>
+    <div class="flex justify-end gap-[6%]">
+        <button class="bg-blue-500 text-white-500 py-2 px-4 my-5 flex rounded items-center flex-none" (click)="open = true"
+            data-te-target="#createModal" data-te-toggle="modal">
+            <svg class="h-6 w-8 text-white-500" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" />
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             Add task
         </button>
+        <button class="flex items-center justify-center w-[1/2] relative gap-[3%]" type="button" (click)="optionsDropdown = !optionsDropdown">
+            <span class="text-white-500">{{ loggedInUser.username }}</span>
+            <i class="fa fa-caret-down" [ngClass]="{ 'fa-caret-up': optionsDropdown }"></i>
+            <div *ngIf="optionsDropdown" class="flex flex-col absolute right-2 top-16 p-3 text-left bg-white rounded w-[max-content]">
+                <a href="#" class="outline-none text-gray-500 p-1 hover:bg-gray-200 text-gray-900">Profile settings</a>
+                <a href="#" class="outline-none text-gray-500 p-1 hover:bg-gray-200 text-gray-900">Manage account</a>
+                <a href="#" class="outline-none text-gray-500 p-1 hover:bg-gray-200 text-gray-900">Sign out</a>
+            </div>
+        </button>        
     </div>
-    <div *ngIf="!tasksList.length" class="text-gray-500 text-bold flex justify-center mb-2">
+</app-header>
+<div class="w-full my-3">
+    <div *ngIf="!tasksList?.length" class="text-gray-500 text-bold flex justify-center mb-2">
         No tasks to display.
     </div>
     <ng-container *ngFor="let task of tasksList">

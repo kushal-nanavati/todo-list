@@ -1,0 +1,40 @@
+<app-header [title]="'Register form'"></app-header>
+<div class="flex flex-col justify-center items-center">
+    <app-forms class="w-[40%]" [form]="registerForm" (formSubmitted)="onSubmit($event)" [buttonText]="'Sign up'" [title]="'Create an account'" [isDisabled]="!registerForm.valid">
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'First name'" [placeholder]="'Enter first name'"
+                name="firstName"></app-input>
+        </div>
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'Last name'" [placeholder]="'Enter last name'"
+                name="lastName"></app-input>
+        </div>
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'Email'" [placeholder]="'Enter email'"
+                name="email" type="email"></app-input>
+        </div>
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'Username'" [placeholder]="'Enter username'"
+                name="username" type="text"></app-input>
+        </div>
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'Password'" [placeholder]="'Enter password'"
+                name="password" type="password"></app-input>
+        </div>
+        <div class="mb-4" formFields>
+            <app-input [form]="registerForm" [label]="'Mobile number'" [placeholder]="'Enter contact number'"
+                name="contactNumber" type="text"></app-input>
+        </div>
+        <div class="flex justify-between mb-4">
+            <div class="flex items-center mb-4">
+                <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-300 border-gray-300 rounded mr-2"/>               
+                <label class="text-sm font-medium text-gray-300">Remember me</label>
+            </div>
+            <div><a href="" class="text-blue-600 font-bold focus:text-underline">Forgot password?</a></div>
+        </div>
+        <div class="my-4">
+            <span>Already having an account?</span>
+            <a [routerLink]="['/login']" class="text-blue-500 font-bold ml-1">Sign in</a>
+        </div>
+    </app-forms>
+</div>

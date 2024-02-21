@@ -4,6 +4,8 @@ import { TaskService } from '../shared/services/task.service';
 import { Subscription, concatMap, debounceTime, distinctUntilChanged, share, startWith, switchMap } from 'rxjs';
 import { ToDoTask } from '../shared/models/task.model';
 import { ToastrService } from 'ngx-toastr';
+import { UsersService } from '../shared/services/users.service';
+import { LoggedInUsers } from '../shared/models/users.model';
 
 @Component({
   selector: 'app-todo-list',
@@ -13,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 export class TodoListComponent implements OnInit, OnDestroy {
   open: boolean = false;
   openPopup: boolean = false;
+  optionsDropdown: boolean = false;
   selectedTaskId: number;
   createTitle: string = 'Create New Task';
   deleteTitle: string = 'Delete Task';
@@ -29,27 +32,40 @@ export class TodoListComponent implements OnInit, OnDestroy {
   priorityLevels: string[] = ['HIGH', 'MEDIUM', 'LOW'];
   searchForm: FormGroup;
   tasksList: ToDoTask[];
+  loggedInUser: LoggedInUsers;
   subscription: Subscription = new Subscription();
 
   constructor(
     private formBuilder: FormBuilder,
     private taskService: TaskService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private usersService: UsersService
   ) {}
 
   public ngOnInit(): void {
     this.initializeForm();
     this.subscription.add(
-      this.searchForm.get('searchTerm').valueChanges.pipe(
-        debounceTime(400),
-        distinctUntilChanged(),
-        startWith(''),
-        switchMap((searchValue: string) =>
-          this.taskService.getAllTasks(searchValue).pipe(share())
-        )).subscribe((data: ToDoTask[]) => {                    
-          this.tasksList = data;
-        })
-    );    
+      this.usersService.authenticatedUser$.subscribe((authenticatedUser: LoggedInUsers) => {
+        this.loggedInUser = authenticatedUser;
+      })
+    );
+    this.subscription.add(
+      this.usersService.isAuthenticated$.asObservable().subscribe((isAuthenticated: boolean) => {
+        if(isAuthenticated) {
+          this.subscription.add(
+            this.searchForm.get('searchTerm').valueChanges.pipe(
+              debounceTime(20),
+              distinctUntilChanged(),
+              startWith(''),
+              switchMap((searchValue: string) =>
+                this.taskService.getAllTasks(searchValue).pipe(share())
+              )).subscribe((data: ToDoTask[]) => {                    
+                this.tasksList = data;
+              })
+          );
+        }
+      })
+    );        
   }
 
   public initializeForm(): void {
@@ -68,6 +84,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
         return accumulator.id > currentValue.id ? accumulator : currentValue;
       }).id;
     }
+    this.subscription.add(
     this.taskService
       .setTaskDetails({ id: lastId + 1, ...this.modalForm.value })
       .pipe(concatMap((rowsAffected: number[]) => {
@@ -77,7 +94,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
         return this.taskService.getAllTasks();
       })).subscribe((data: ToDoTask[]) => {
         this.tasksList = data;
-      });
+      }));
 
     this.selectedValue = this.modalForm.get('priority')?.value;
     this.modalForm.reset();
@@ -94,6 +111,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
 
   deleteTask(id: number) {
     if (this.openPopup) {
+      this.subscription.add(
       this.taskService.deleteTask(id).pipe(concatMap((rowsAffected: number[]) => {
         if(rowsAffected.at(0) === 1) {
           this.toastrService.success('Task deleted successfully...');
@@ -102,7 +120,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
         return this.taskService.getAllTasks();
       })).subscribe((data: ToDoTask[]) => {
         this.tasksList = data;
-      });
+      }));
     }
   }
 
